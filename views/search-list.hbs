@@ -1,0 +1,52 @@
+<!-- It's a handlebars template! hbs(handlebars): http://handlebarsjs.com/ -->
+
+<!DOCTYPE html>
+<html>
+{{> head}}
+
+<body class="uk-background-secondary">
+  <h1 class="uk-padding-large df-title uk-heading-medium uk-background-secondary uk-text-center uk-text-muted"> epic
+    gamer time </h1>
+  <nav class="uk-navbar-container uk-margin uk-navbar-transparent" uk-navbar>
+
+    <div class="nav-overlay uk-navbar-center">
+
+      <ul class="uk-navbar-nav">
+        {{#if page}}
+        <li class="uk-active"><a href="/">recent</a></li>
+        <li class="uk-parent"><a href="?id=p">popular</a></li>
+        {{else}}
+        <li class="uk-parent"><a href="/">recent</a></li>
+        <li class="uk-active"><a href="/?id=p">popular</a></li>
+        {{/if}}
+      </ul>
+      <a class="uk-navbar-toggle" uk-search-icon uk-toggle="target: .nav-overlay; animation: uk-animation-fade"
+        href="#"></a>
+    </div>
+    <div class="nav-overlay uk-margin-remove-vertical uk-navbar-right">
+      <a href="https://ko-fi.com/wonderfulsubs" class="uk-navbar-toggle uk-margin-vertical" uk-toggle>
+        <span uk-icon="icon: lifesaver"></span> </a>
+    </div>
+
+    <div class="nav-overlay uk-navbar-center uk-flex-1" hidden>
+
+      <div class="uk-navbar-item uk-width-expand">
+        <form class="uk-search uk-search-navbar uk-width-1-1">
+          <input class="uk-search-input" type="search" placeholder="Search..." action="/search" name="q" autofocus>
+        </form>
+      </div>
+
+      <a class="uk-navbar-toggle" uk-close uk-toggle="target: .nav-overlay; animation: uk-animation-fade" href="#"></a>
+
+    </div>
+
+  </nav>
+
+  <section class="section">
+    <div class="container uk-padding-large uk-animation-slide-bottom-medium uk-animation-toggle">
+    </div>
+  </section>
+</body>
+{{> footer}}
+
+</html>

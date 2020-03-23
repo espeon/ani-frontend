@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html class="uk-background-secondary">
+{{> head}}
+
+<body class="uk-background-secondary">
+  <nav class="uk-navbar-container uk-navbar-transparent uk-margin-remove-vertical" uk-navbar>
+    <div class="nav-overlay uk-margin-remove-vertical uk-navbar-left">
+
+      <a href="https://wsubs.glitch.me/anime/{{series}}" class="uk-navbar-toggle uk-margin-remove-vertical" uk-toggle>
+        <span uk-icon="icon: chevron-left"></span> </a>
+      <div class="uk-navbar-item">{{title}} | {{top}} </div>
+    </div>
+    <div class="nav-overlay uk-margin-remove-vertical uk-navbar-right">
+      <a href="https://wsubs.glitch.me/" class="uk-navbar-toggle uk-margin-remove-vertical" uk-toggle>
+        <span uk-icon="icon: home"></span> </a>
+      <a href="https://ko-fi.com/wonderfulsubs" class="uk-navbar-toggle uk-margin-vertical" uk-toggle>
+        <span uk-icon="icon: lifesaver"></span> </a>
+    </div>
+  </nav>
+  <div class="uk-card uk-card-secondary uk-align-center uk-width-2-3@m uk-margin-remove-bottom ">
+    <div class="container">
+      <video controls crossorigin playsinline>
+        {{#if subs}}
+          <track kind="captions" label="English" src="{{subs}}" srclang="en" default />
+        {{/if}}
+      </video>
+    </div>
+  </div>
+  <nav class="uk-navbar-container uk-navbar-transparent uk-margin-medium-top" uk-navbar>
+    <div class="nav-overlay uk-navbar-center">
+      <ul class="uk-navbar-nav">
+        {{#if back}}
+        <li class="uk-parent"><a href="./{{index}}"><span uk-icon="icon: chevron-left"></span></a></li>
+        {{/if}}
+        <li class="uk-parent"><a href="#modal-center" uk-toggle><span uk-icon="icon: album"></span></a></li>
+        {{#if fwd}}
+        <li class="uk-parent"><a href="./{{forw}}"><span uk-icon="icon: chevron-right"></span></a></li>
+        {{/if}}
+        <div id="modal-center" class="uk-flex-top" uk-modal>
+          <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <p>{{{page}}}</p>
+          </div>
+        </div>
+        <div id="modal-center-2" class="uk-flex-top uk-modal-full" uk-modal>
+        </div>
+      </ul>
+    </div>
+  </nav>
+  <script src="https://cdn.rawgit.com/video-dev/hls.js/18bb552/dist/hls.min.js"></script>
+  <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+  <script src="/subtitles-octopus.js"></script>
+  <script src="/fonts.js"></script>
+  <script src="/plyr.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', () => {
+      const source = '{{{video}}}'
+      const video = document.querySelector('video');
+      const player = new Plyr(video, { captions: { active: true, update: true, language: 'en', } });
+
+      if (source.includes(".m3u8") || source.includes('/media/playlist')) {
+        console.log('loading hls (m3u8)')
+        const hls = new Hls();
+        hls.loadSource(source);
+        hls.attachMedia(video);
+        window.hls = hls;
+        player.on('languagechange', () => {
+          // Caption support is still flaky. See: https://github.com/sampotts/plyr/issues/994
+          setTimeout(() => hls.subtitleTrack = player.currentTrack, 50);
+        });
+      } else if(source.includes(".mpd")){
+        const dash = dashjs.MediaPlayer().create();
+        const video = document.querySelector('video');
+        dash.initialize(video, source, true);
+        // Update caption tracks after initializing Plyr to get the generated captions
+        // For more options see: https://github.com/sampotts/plyr/#options
+        const player = new Plyr(video, {captions: {active: true, update: true}});
+        // Expose player and dash so they can be used from the console
+        window.player = player;
+        window.dash = dash;
+      }else{
+        player.source = {
+          type: 'video',
+          title: 'Example title',
+          sources: [
+            {
+              src: source,
+              type: 'video/mp4',
+            }
+          ]
+        }
+      }
+      window.player = player;
+      player.on('loadeddata', event => {
+    //player.currentTime = {{{ff}}};
+      //history.replaceState("", "lol nice haha yes", "?time=500")
+});
+    player.on('progress', event => {
+      //history.replaceState("", "lol nice haha yes", `?time=${Math.round(player.currentTime)}`)
+});
+      {{#if subs}}
+      let enabled = 0
+        if("{{subs}}".includes('.ass')){
+          window.SubtitlesOctopusOnLoad = function() {
+                    var options = {
+                        video: video,
+                        subUrl: '{{{html_decoder subs}}}',
+                        availableFonts: fonts(),
+                        //onReady: onReadyFunction,
+                        //debug: true,
+                        workerUrl: '/subtitles-octopus-worker.js'
+                    };
+                    window.octopusInstance = new SubtitlesOctopus(options); // You can experiment in console
+                    enabled = 1
+                };
+
+          player.on('captionsdisabled', function() {
+            if(enabled === 1){
+              console.log('disabled captions')
+            octopusInstance.dispose();
+            }
+          })
+          player.on('captionsenabled', function(){
+            console.log('captions', enabled)
+            if (SubtitlesOctopus) {
+              console.log('enabled captions')
+                    SubtitlesOctopusOnLoad();
+                }
+          })
+        }
+        {{/if}}
+    });
+    
+  </script>
+</body>
+
+</html>

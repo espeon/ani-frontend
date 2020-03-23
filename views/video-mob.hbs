@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html class="uk-background-secondary">
+{{> head}}
+
+<body class="uk-background-secondary">
+  <nav class="uk-navbar-container uk-navbar-transparent uk-margin-remove-vertical" uk-navbar>
+    <div class="nav-overlay uk-margin-remove-vertical uk-navbar-left">
+
+      <a href="https://wsubs.glitch.me/anime/{{series}}" class="uk-navbar-toggle uk-margin-remove-vertical" uk-toggle>
+        <span uk-icon="icon: chevron-left; ratio: 2"></span> </a>
+      <div class="uk-navbar-item">{{title}} | {{top}} </div>
+    </div>
+    <div class="nav-overlay uk-margin-remove-vertical uk-navbar-right">
+      <a href="https://wsubs.glitch.me/" class="uk-navbar-toggle uk-margin-remove-vertical" uk-toggle>
+        <span uk-icon="icon: home; ratio: 2"></span> </a>
+      <a href="https://ko-fi.com/wonderfulsubs" class="uk-navbar-toggle uk-margin-vertical" uk-toggle>
+        <span uk-icon="icon: lifesaver; ratio: 2"></span> </a>
+    </div>
+  </nav>
+  <div class="uk-card uk-card-secondary uk-align-center uk-width-2-3@m uk-margin-remove-bottom ">
+    <div class="container">
+      <iframe title="Video" sandbox="allow-same-origin allow-scripts" src="{{video}}" scrolling="no" allowfullscreen="" frameborder="0"></iframe>
+    </div>
+  </div>
+  <nav class="uk-navbar-container uk-navbar-transparent uk-margin-medium-top" uk-navbar>
+    <div class="nav-overlay uk-navbar-center">
+      <ul class="uk-navbar-nav">
+        {{#if back}}
+        <li class="uk-parent"><a href="./{{index}}"><span uk-icon="icon: chevron-left; ratio: 2"></span></a></li>
+        {{/if}}
+        <li class="uk-parent"><a href="#modal-center" uk-toggle><span uk-icon="icon: album; ratio: 2"></span></a></li>
+        {{#if fwd}}
+        <li class="uk-parent"><a href="./{{forw}}"><span uk-icon="icon: chevron-right; ratio: 2"></span></a></li>
+        {{/if}}
+        <div id="modal-center" class="uk-flex-top" uk-modal>
+          <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <p>{{{page}}}</p>
+          </div>
+        </div>
+        <div id="modal-center-2" class="uk-flex-top uk-modal-full" uk-modal>
+        </div>
+      </ul>
+    </div>
+  </nav>
+  <script src="https://cdn.rawgit.com/video-dev/hls.js/18bb552/dist/hls.min.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', () => {
+      const source = '{{{video}}}'
+      const video = document.querySelector('video');
+      const player = new Plyr(video, { captions: { active: true, update: true, language: 'en', } });
+
+      if (!source.includes(".m3u8")) {
+        player.source = {
+          type: 'video',
+          title: 'Example title',
+          sources: [
+            {
+              src: source,
+              type: 'video/mp4',
+            }
+          ]
+        }
+      } else {
+        const hls = new Hls();
+        hls.loadSource(source);
+        hls.attachMedia(video);
+        window.hls = hls;
+      }
+      window.player = player
+    });
+  </script>
+</body>
+
+</html>
