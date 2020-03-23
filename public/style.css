@@ -1,0 +1,39 @@
+@font-face {
+  font-family: "WarioLand4CHMC";
+
+  src: url("https://cdn.glitch.com/d8ee90b7-f72a-4030-940a-8d983360fc9e%2FWarioLand4CHMC.woff2?v=1562220128534") format("woff2"); /* Modern Browsers */
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "RetroGaming";
+
+  src: url("https://cdn.glitch.com/d8ee90b7-f72a-4030-940a-8d983360fc9e%2FFreePixel.woff2?v=1562231809204") format("woff2"); /* Modern Browsers */
+  font-weight: 300;
+  font-style: normal;
+}
+
+df-title {
+  font-family: WarioLand4CHMC, RetroGaming, arial, sans-serif;
+}
+
+ /* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+} 

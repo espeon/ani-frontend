@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html class="uk-background-secondary">
+{{> head}}
+
+<body class="uk-background-secondary">
+  <script src="https://code.jquery.com/jquery-2.2.2.min.js"></script>
+  <div class="container uk-width-auto uk-navbar-center">
+    <div id="waveform"></div>
+    <audio id="player" src="{{{video}}}" controls crossorigin playsinline>
+    </audio>
+    <canvas id="canvasCtx" width="800" height="400"></canvas>
+  </div>
+  <nav class="uk-navbar-container uk-navbar-transparent" uk-navbar>
+    <div class="nav-overlay uk-navbar-center">
+    </div>
+  </nav>
+  <script src="https://cdn.rawgit.com/video-dev/hls.js/18bb552/dist/hls.min.js"></script>
+
+  <script>document.addEventListener('DOMContentLoaded', () => {
+      const source = '{{{video}}}'
+      const audio = document.querySelector('audio');
+      const player = new Plyr(audio, { captions: { active: true, update: true, language: 'en', } });
+
+      if (!source.includes(".m3u8")) {
+        player.source = {
+          type: 'audio',
+          title: 'Example title',
+          sources: [
+            {
+              src: source,
+            }
+          ]
+        }
+      }  else if(source.includes(".mpd")){
+        const dash = dashjs.MediaPlayer().create();
+        const video = document.querySelector('video');
+        dash.initialize(video, source, true);
+        // Update caption tracks after initializing Plyr to get the generated captions
+        // For more options see: https://github.com/sampotts/plyr/#options
+        const player = new Plyr(video, {captions: {active: true, update: true}});
+        // Expose player and dash so they can be used from the console
+        window.player = player;
+        window.dash = dash;
+      } else {
+        const hls = new Hls();
+        hls.loadSource(source);
+        hls.attachMedia(video);
+        window.hls = hls;
+      }
+      window.player = player
+
+    });
+  </script>
+</body>
+
+</html>
